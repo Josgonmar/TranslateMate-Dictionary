@@ -33,27 +33,28 @@ class MainProgram:
                 json.dump(self.__data, file, indent=4)
 
     def __add_word(self):
-
-            def ask_prompt():
-                answer = input("Is it correct? (YES/no): ")
-                if answer.strip().upper() == "YES" or not answer:
-                    return True
-                elif answer.strip().upper() == "NO":
-                    self.__add_word()
-                    return False
-                else:
-                    return ask_prompt()
-
             english = {"EN": input("EN: ")}
             german = {"DE": input("DE: ")}
+            gender = {"GENDER": input("GENDER: ")}
 
-            new_word = [english, german]
+            new_word = [english, german, gender]
 
-            print(f"So, you entered: '{english}' and its German translation '{german}' to the dictionary.")
+            print(f"So, you entered: '{new_word}' to the dictionary.")
 
-            if (ask_prompt()):
+            if (self.__ask_prompt()):
                 self.__data.append(new_word)
                 self.__hasChanges = True
+                print(Fore.LIGHTGREEN_EX + "New entry added!\n")
+
+    def __ask_prompt(self):
+        answer = input("Is it correct? (YES/no): ")
+        if answer.strip().upper() == "YES" or answer.strip().lower() == "y" or not answer:
+            return True
+        elif answer.strip().upper() == "NO" or answer.strip().lower() == "n":
+            self.__add_word()
+            return False
+        else:
+            return self.__ask_prompt()
 
     def __display_menu(self):
         print(Fore.GREEN + "Please, select one of the available options down below:")
@@ -80,6 +81,7 @@ class MainProgram:
             choice = input("Enter your choice: ")
 
             if choice == '1':
+                print(Fore.LIGHTGREEN_EX + "Let's add a new word to the list!")
                 self.__add_word()
             elif choice == '2':
                 print("You selected Option 2, but it does nothing just yet!")

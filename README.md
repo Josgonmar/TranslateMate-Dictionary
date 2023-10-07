@@ -27,7 +27,10 @@ The project relies on the following Python libraries:
 
 - [ ] Implement search functionality.
 - [ ] Implement word removal functionality.
+- [ ] Implement type of word (verb, noun, adj...).
+- [ ] Implement singular and plural words.
+
 - [ ] Improve input validation and error handling.
 - [ ] Enhance user prompts and feedback.
 - [ ] Refactor code for better maintainability.
-- [ ] Handle duplicate word pairs.
+- [ ] Handle duplicate dictionary entries.
