@@ -27,10 +27,11 @@ The project relies on the following Python libraries:
 
 - [ ] Implement search functionality.
 - [ ] Implement word removal functionality.
-- [ ] Implement type of word (verb, noun, adj...).
-- [ ] Implement singular and plural words.
+- [x] Implement type of word (verb, noun, adj...).
+- [x] Implement singular and plural words.
 
+- [ ] Implementation using [numpy](https://numpy.org/doc/stable/) for better performance.
 - [ ] Improve input validation and error handling.
-- [ ] Enhance user prompts and feedback.
-- [ ] Refactor code for better maintainability.
+- [*] Enhance user prompts and feedback.
+- [*] Refactor code for better maintainability.
 - [ ] Handle duplicate dictionary entries.
