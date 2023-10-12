@@ -25,7 +25,7 @@ The project relies on the following Python libraries:
 
 ## TODO List
 
-- [ ] Implement search functionality.
+- [x] Implement search functionality.
 - [ ] Implement word removal functionality.
 - [x] Implement type of word (verb, noun, adj...).
 - [x] Implement singular and plural words.
