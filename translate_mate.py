@@ -10,15 +10,15 @@ class MainProgram:
     def __init__(self, file_path):
         self.__folder_path = file_path
         self.__data_lists = {"nomen": [], "verb": [], "adjektiv": [], "adverb": []}
-        self.__hasChanges = False
+        self.__has_changes = False
 
-        def signal_handler(signum, frame):
-            self.__save_and_exit()
+        def signalHandler(signum, frame):
+            self.__saveAndExit()
 
-        signal.signal(signal.SIGINT, signal_handler)
+        signal.signal(signal.SIGINT, signalHandler)
 
-    def __save_and_exit(self):
-        if (self.__hasChanges):
+    def __saveAndExit(self):
+        if (self.__has_changes):
             for file_type, data_list in self.__data_lists.items():
                 file_path = self.__folder_path + '/' + file_type + '.json'
                 with open(file_path, "w") as file:
@@ -29,43 +29,44 @@ class MainProgram:
             print(Fore.GREEN + "Goodbye!")
         sys.exit(0)
 
-    def __load_data(self):
+    def __loadData(self):
         try:
             for file_type, data_list in self.__data_lists.items():
                 file_path = self.__folder_path + '/' + file_type + '.json'
                 with open(file_path, "r") as file:
-                    data_list = json.load(file)
-                    print(Fore.LIGHTGREEN_EX + f"[Successfully loaded a total of: '{len(data_list)}' " + file_type + " from local]")
-
+                    self.__data_lists[file_type] = json.load(file)
+                    print(Fore.LIGHTGREEN_EX + f"[Successfully loaded a total of: '{len(self.__data_lists[file_type])}' " + file_type + " from local]")
         except FileNotFoundError:
             print(Fore.YELLOW + "[JSON file not found. Creating an empty dictionary locally]")
             for file_type, data_list in self.__data_lists.items():
                 file_path = self.__folder_path + '/' + file_type + '.json'
                 with open(file_path, "w") as file:
                     json.dump(data_list, file, indent=4)
+        except Exception as e:
+            print(Fore.LIGHTRED_EX + f"[An error occurred while loading data: {str(e)}]")
 
-    def __add_word(self):
+    def __addWord(self):
         w_type = input("Enter your choice: ")
 
         if w_type == '1':
             print(Fore.LIGHTGREEN_EX + "Let's add a new noun to the list!")
-            self.__add_new_noun()
+            self.__addNewNoun()
         elif w_type == '2':
             print(Fore.LIGHTGREEN_EX + "Let's add a new verb to the list!")
-            self.__add_new_verb()
+            self.__addNewVerb()
         elif w_type == '3':
             print(Fore.LIGHTGREEN_EX + "Let's add a new adjective to the list!")
-            self.__add_new_adjective()
+            self.__addNewAdjective()
         elif w_type == '4':
             print(Fore.LIGHTGREEN_EX + "Let's add a new adverb to the list!")
-            self.__add_new_adverb()
+            self.__addNewAdverb()
         elif w_type == '5':
             return
         else:
             print(Fore.RED + "Invalid choice. Please select a valid option.")
-            self.__add_word()
+            self.__addWord()
 
-    def __add_new_noun(self):
+    def __addNewNoun(self):
         english = {"EN": input("EN: ")}
         german = {"DE": input("DE: ")}
         gender = {"GENDER": input("GENDER (DE): ")}
@@ -75,12 +76,12 @@ class MainProgram:
 
         print(f"So, you entered: '{new_word}'")
 
-        if (self.__ask_prompt_correct(self.__add_new_noun)):
+        if (self.__askPromptCorrect(self.__addNewNoun)):
             self.__data_lists["nomen"].append(new_word)
-            self.__hasChanges = True
+            self.__has_changes = True
             print(Fore.LIGHTGREEN_EX + "New entry added!\n")
 
-    def __add_new_verb(self):
+    def __addNewVerb(self):
         english = {"EN": input("EN: ")}
         german = {"DE": input("DE: ")}
         partizip = {"PARTIZIP": input("PARTIZIP: ")}
@@ -89,12 +90,12 @@ class MainProgram:
 
         print(f"So, you entered: '{new_word}'")
 
-        if (self.__ask_prompt_correct(self.__add_new_verb)):
+        if (self.__askPromptCorrect(self.__addNewVerb)):
             self.__data_lists["verb"].append(new_word)
-            self.__hasChanges = True
+            self.__has_changes = True
             print(Fore.LIGHTGREEN_EX + "New entry added!\n")
 
-    def __add_new_adjective(self):
+    def __addNewAdjective(self):
         english = {"EN": input("EN: ")}
         german_m = {"DE_M": input("DE_M: ")}
         german_f = {"DE_F": input("DE_F: ")}
@@ -104,12 +105,12 @@ class MainProgram:
 
         print(f"So, you entered: '{new_word}'")
 
-        if (self.__ask_prompt_correct(self.__add_new_adjective)):
+        if (self.__askPromptCorrect(self.__addNewAdjective)):
             self.__data_lists["adjektiv"].append(new_word)
-            self.__hasChanges = True
+            self.__has_changes = True
             print(Fore.LIGHTGREEN_EX + "New entry added!\n")
 
-    def __add_new_adverb(self):
+    def __addNewAdverb(self):
         english = {"EN": input("EN: ")}
         german = {"DE": input("DE: ")}
 
@@ -117,12 +118,12 @@ class MainProgram:
 
         print(f"So, you entered: '{new_word}'")
 
-        if (self.__ask_prompt_correct(self.__add_new_adverb)):
+        if (self.__askPromptCorrect(self.__addNewAdverb)):
             self.__data_lists["adverb"].append(new_word)
-            self.__hasChanges = True
+            self.__has_changes = True
             print(Fore.LIGHTGREEN_EX + "New entry added!\n")
 
-    def __ask_prompt_correct(self, function):
+    def __askPromptCorrect(self, function):
         answer = input("Is it correct? (YES/no): ")
         if answer.strip().upper() == "YES" or answer.strip().lower() == "y" or not answer:
             return True
@@ -130,9 +131,34 @@ class MainProgram:
             function()
             return False
         else:
-            return self.__ask_prompt_correct()
+            return self.__askPromptCorrect()
         
-    def __display_word_menu(self):
+    def __AskPromptGoAhead(self):
+        answer = input("(YES/no): ")
+        if answer.strip().upper() == "YES" or answer.strip().lower() == "y" or not answer:
+            return True
+        elif answer.strip().upper() == "NO" or answer.strip().lower() == "n":
+            return False
+        else:
+            return self.__askPromptCorrect()
+        
+    def __findWord(self):
+        wordToLookFor = input("Enter word: ")
+
+        for file_type, data_list in self.__data_lists.items():
+            for entry in data_list:
+                for dict in entry:
+                    for _, value in dict.items():
+                        if (value.strip().lower() == wordToLookFor.strip().lower()):
+                            print(Fore.LIGHTGREEN_EX + f"Found a '{file_type}': '{entry}'")
+                            return
+                
+        print(Fore.LIGHTRED_EX + "Word not found. Would you like to add it?")
+        if (self.__AskPromptGoAhead()):
+            self.__displayWordMenu()
+            self.__addWord()
+        
+    def __displayWordMenu(self):
         print(Fore.GREEN + "Ok, which type of word is it?:")
         print(Fore.BLUE + "1. Noun.")
         print(Fore.BLUE + "2. Verb.")
@@ -140,7 +166,7 @@ class MainProgram:
         print(Fore.BLUE + "4. Adverb.")
         print(Fore.RED + "5. Go back")
 
-    def __display_main_menu(self):
+    def __displayMainMenu(self):
         print(Fore.GREEN + "Please, select one of the available options down below:")
         print(Fore.BLUE + "1. Add a new word.")
         print(Fore.BLUE + "2. Look for an existing word.")
@@ -149,26 +175,27 @@ class MainProgram:
 
     def run(self):
 
-        self.__load_data()
+        self.__loadData()
 
         print("\n" + Fore.GREEN + "Welcome to " + Fore.CYAN + "TranslateMate" + Fore.GREEN + ", an interactive EN-DE dictionary!")
 
         while True:
-            self.__display_main_menu()
+            self.__displayMainMenu()
 
             print(Style.RESET_ALL)
             choice = input("Enter your choice: ")
 
             if choice == '1':
                 print(Fore.LIGHTGREEN_EX + "Let's add a new word to the list!")
-                self.__display_word_menu()
-                self.__add_word()
+                self.__displayWordMenu()
+                self.__addWord()
             elif choice == '2':
-                print("You selected Option 2, but it does nothing just yet!")
+                print(Fore.LIGHTGREEN_EX + "Let's find that word for you!")
+                self.__findWord()
             elif choice == '3':
                 print("You selected Option 3, but it does nothig just yet!")
             elif choice == '4' or choice.strip().lower() == 'q':
-                self.__save_and_exit()
+                self.__saveAndExit()
                 break
             else:
                 print(Fore.RED + "Invalid choice. Please select a valid option.")
