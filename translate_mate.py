@@ -143,22 +143,42 @@ class MainProgram:
             return self.__AskPromptGoAhead()
         
     def __findWord(self):
-        wordToLookFor = input("Enter word: ")
+        word_to_look_for = input("Enter word: ")
         somethingFound = False
 
         for file_type, data_list in self.__data_lists.items():
             for entry in data_list:
                 for dict in entry:
                     for _, value in dict.items():
-                        if (value.strip().lower() == wordToLookFor.strip().lower()):
+                        if (value.strip().lower() == word_to_look_for.strip().lower()):
                             somethingFound = True
-                            print(Fore.LIGHTGREEN_EX + f"Found a '{file_type}': '{entry}'")
+                            print(Fore.LIGHTMAGENTA_EX + f"Found a '{file_type}': '{entry}'")
         
         if (not somethingFound):
             print(Fore.LIGHTRED_EX + "Word not found. Would you like to add it?")
             if (self.__AskPromptGoAhead()):
                 self.__displayWordMenu()
                 self.__addWord()
+
+    def __removeWord(self):
+        word_to_look_for = input("Enter word: ")
+
+        for file_type, data_list in self.__data_lists.items():
+            entries_to_remove = []
+
+            for entry in data_list:
+                for dict in entry:
+                    for _, value in dict.items():
+                        if (value.strip().lower() == word_to_look_for.strip().lower()):
+                            print(Fore.LIGHTMAGENTA_EX + f"Found a '{file_type}': '{entry}'")
+                            print(Fore.LIGHTGREEN_EX + "Would you like to remove it?")
+                            if (self.__AskPromptGoAhead()):
+                                entries_to_remove.append(entry)
+
+            for entry in entries_to_remove:
+                data_list.remove(entry)
+                self.__has_changes = True
+                print(Fore.RED + "Word removed.")
         
     def __displayWordMenu(self):
         print(Fore.GREEN + "Ok, which type of word is it?:")
@@ -195,7 +215,8 @@ class MainProgram:
                 print(Fore.LIGHTGREEN_EX + "Let's find that word for you!")
                 self.__findWord()
             elif choice == '3':
-                print("You selected Option 3, but it does nothig just yet!")
+                print(Fore.LIGHTGREEN_EX + "Let's get rid of that word for good!")
+                self.__removeWord()
             elif choice == '4' or choice.strip().lower() == 'q':
                 self.__saveAndExit()
                 break
