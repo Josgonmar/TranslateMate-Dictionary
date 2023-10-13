@@ -9,7 +9,7 @@ class MainProgram:
 
     def __init__(self, file_path):
         self.__folder_path = file_path
-        self.__data_lists = {"nomen": [], "verb": [], "adjektiv": [], "adverb": []}
+        self.__data_lists = {"noun": [], "verb": [], "adjective": [], "adverb": []}
         self.__has_changes = False
 
         def signalHandler(signum, frame):
@@ -24,24 +24,24 @@ class MainProgram:
                 with open(file_path, "w") as file:
                     json.dump(data_list, file, indent=4)
 
-            print(Fore.GREEN + "Data saved successfully. Goodbye!")
+            print(Fore.GREEN + "\nData saved successfully. Goodbye!")
         else:
-            print(Fore.GREEN + "Goodbye!")
+            print(Fore.GREEN + "\nGoodbye!")
         sys.exit(0)
 
     def __loadData(self):
         try:
             for file_type, data_list in self.__data_lists.items():
                 file_path = self.__folder_path + '/' + file_type + '.json'
-                with open(file_path, "r") as file:
-                    self.__data_lists[file_type] = json.load(file)
-                    print(Fore.LIGHTGREEN_EX + f"[Successfully loaded a total of: '{len(self.__data_lists[file_type])}' " + file_type + " from local]")
-        except FileNotFoundError:
-            print(Fore.YELLOW + "[JSON file not found. Creating an empty dictionary locally]")
-            for file_type, data_list in self.__data_lists.items():
-                file_path = self.__folder_path + '/' + file_type + '.json'
-                with open(file_path, "w") as file:
-                    json.dump(data_list, file, indent=4)
+                try:
+                    with open(file_path, "r") as file:
+                        self.__data_lists[file_type] = json.load(file)
+                        print(Fore.LIGHTGREEN_EX + f"[Successfully loaded a total of: '{len(self.__data_lists[file_type])}' " 
+                            + file_type + "(s)"+ " from local]")
+                except FileNotFoundError as e:
+                    print(Fore.YELLOW + f"[JSON file for '{file_type}' not found. Creating an empty dictionary locally]")
+                    with open(file_path, "w") as file:
+                        json.dump(data_list, file, indent=4)
         except Exception as e:
             print(Fore.LIGHTRED_EX + f"[An error occurred while loading data: {str(e)}]")
 
@@ -77,7 +77,7 @@ class MainProgram:
         print(f"So, you entered: '{new_word}'")
 
         if (self.__askPromptCorrect(self.__addNewNoun)):
-            self.__data_lists["nomen"].append(new_word)
+            self.__data_lists["noun"].append(new_word)
             self.__has_changes = True
             print(Fore.LIGHTGREEN_EX + "New entry added!\n")
 
@@ -106,7 +106,7 @@ class MainProgram:
         print(f"So, you entered: '{new_word}'")
 
         if (self.__askPromptCorrect(self.__addNewAdjective)):
-            self.__data_lists["adjektiv"].append(new_word)
+            self.__data_lists["adjective"].append(new_word)
             self.__has_changes = True
             print(Fore.LIGHTGREEN_EX + "New entry added!\n")
 
@@ -140,23 +140,25 @@ class MainProgram:
         elif answer.strip().upper() == "NO" or answer.strip().lower() == "n":
             return False
         else:
-            return self.__askPromptCorrect()
+            return self.__AskPromptGoAhead()
         
     def __findWord(self):
         wordToLookFor = input("Enter word: ")
+        somethingFound = False
 
         for file_type, data_list in self.__data_lists.items():
             for entry in data_list:
                 for dict in entry:
                     for _, value in dict.items():
                         if (value.strip().lower() == wordToLookFor.strip().lower()):
+                            somethingFound = True
                             print(Fore.LIGHTGREEN_EX + f"Found a '{file_type}': '{entry}'")
-                            return
-                
-        print(Fore.LIGHTRED_EX + "Word not found. Would you like to add it?")
-        if (self.__AskPromptGoAhead()):
-            self.__displayWordMenu()
-            self.__addWord()
+        
+        if (not somethingFound):
+            print(Fore.LIGHTRED_EX + "Word not found. Would you like to add it?")
+            if (self.__AskPromptGoAhead()):
+                self.__displayWordMenu()
+                self.__addWord()
         
     def __displayWordMenu(self):
         print(Fore.GREEN + "Ok, which type of word is it?:")
