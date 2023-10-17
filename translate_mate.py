@@ -2,6 +2,7 @@ from colorama import Fore, Style, init
 import json
 import signal
 import sys
+import os
 
 init(autoreset=True)
 
@@ -16,32 +17,38 @@ class MainProgram:
             self.__saveAndExit()
 
         signal.signal(signal.SIGINT, signalHandler)
+        signal.signal(signal.SIGTERM, signalHandler)
 
     def __saveAndExit(self):
-        if (self.__has_changes):
+        if self.__has_changes:
             for file_type, data_list in self.__data_lists.items():
-                file_path = self.__folder_path + '/' + file_type + '.json'
-                with open(file_path, "w") as file:
-                    json.dump(data_list, file, indent=4)
-
-            print(Fore.GREEN + "\nData saved successfully. Goodbye!")
+                file_path = os.path.join(self.__folder_path, f'{file_type}.json')
+                try:
+                    with open(file_path, "w") as file:
+                        json.dump(data_list, file, indent=4)
+                    print(Fore.GREEN + f"Data saved successfully for {file_type}.json.")
+                except (FileNotFoundError, PermissionError, json.JSONEncodeError) as e:
+                    print(Fore.RED + f"Error while saving data for {file_type}.json: {e}")
+            print(Fore.GREEN + "Goodbye!")
         else:
-            print(Fore.GREEN + "\nGoodbye!")
+            print(Fore.GREEN + "Goodbye!")
         sys.exit(0)
 
     def __loadData(self):
         try:
             for file_type, data_list in self.__data_lists.items():
-                file_path = self.__folder_path + '/' + file_type + '.json'
+                file_path = os.path.join(self.__folder_path, f'{file_type}.json')
                 try:
                     with open(file_path, "r") as file:
                         self.__data_lists[file_type] = json.load(file)
-                        print(Fore.LIGHTGREEN_EX + f"[Successfully loaded a total of: '{len(self.__data_lists[file_type])}' " 
-                            + file_type + "(s)"+ " from local]")
+                        print(Fore.LIGHTGREEN_EX + f"[Successfully loaded a total of '{len(self.__data_lists[file_type])}' "
+                               + f"{file_type}s from local]")
                 except FileNotFoundError as e:
                     print(Fore.YELLOW + f"[JSON file for '{file_type}' not found. Creating an empty dictionary locally]")
                     with open(file_path, "w") as file:
                         json.dump(data_list, file, indent=4)
+                except json.JSONDecodeError as e:
+                    print(Fore.RED + f"Error while loading data for {file_type}.json: {e}")
         except Exception as e:
             print(Fore.LIGHTRED_EX + f"[An error occurred while loading data: {str(e)}]")
 
@@ -67,61 +74,73 @@ class MainProgram:
             self.__addWord()
 
     def __addNewNoun(self):
-        english = {"EN": input("EN: ")}
-        german = {"DE": input("DE: ")}
-        gender = {"GENDER": input("GENDER (DE): ")}
-        plural = {"PLURAL": input("PLURAL (DE): ")}
+        try:
+            english = {"EN": input("EN: ")}
+            german = {"DE": input("DE: ")}
+            gender = {"GENDER": input("GENDER (DE): ")}
+            plural = {"PLURAL": input("PLURAL (DE): ")}
 
-        new_word = [english, german, gender, plural]
+            new_word = [english, german, gender, plural]
 
-        print(f"So, you entered: '{new_word}'")
+            print(f"So, you entered: '{new_word}'")
 
-        if (self.__askPromptCorrect(self.__addNewNoun)):
-            self.__data_lists["noun"].append(new_word)
-            self.__has_changes = True
-            print(Fore.LIGHTGREEN_EX + "New entry added!\n")
+            if self.__askPromptCorrect(self.__addNewNoun):
+                self.__data_lists["noun"].append(new_word)
+                self.__has_changes = True
+                print(Fore.LIGHTGREEN_EX + "New entry added!\n")
+        except Exception as e:
+            print(Fore.RED + f"Error while adding a new noun: {e}")
 
     def __addNewVerb(self):
-        english = {"EN": input("EN: ")}
-        german = {"DE": input("DE: ")}
-        partizip = {"PARTIZIP": input("PARTIZIP: ")}
+        try:
+            english = {"EN": input("EN: ")}
+            german = {"DE": input("DE: ")}
+            partizip = {"PARTIZIP": input("PARTIZIP: ")}
 
-        new_word = [english, german, partizip]
+            new_word = [english, german, partizip]
 
-        print(f"So, you entered: '{new_word}'")
+            print(f"So, you entered: '{new_word}'")
 
-        if (self.__askPromptCorrect(self.__addNewVerb)):
-            self.__data_lists["verb"].append(new_word)
-            self.__has_changes = True
-            print(Fore.LIGHTGREEN_EX + "New entry added!\n")
+            if (self.__askPromptCorrect(self.__addNewVerb)):
+                self.__data_lists["verb"].append(new_word)
+                self.__has_changes = True
+                print(Fore.LIGHTGREEN_EX + "New entry added!\n")
+        except Exception as e:
+            print(Fore.RED + f"Error while adding a new verb: {e}")
 
     def __addNewAdjective(self):
-        english = {"EN": input("EN: ")}
-        german_m = {"DE_M": input("DE_M: ")}
-        german_f = {"DE_F": input("DE_F: ")}
-        german_n = {"DEF_N": input("DE_N: ")}
+        try:
+            english = {"EN": input("EN: ")}
+            german_m = {"DE_M": input("DE_M: ")}
+            german_f = {"DE_F": input("DE_F: ")}
+            german_n = {"DEF_N": input("DE_N: ")}
 
-        new_word = [english, german_m, german_f, german_n]
+            new_word = [english, german_m, german_f, german_n]
 
-        print(f"So, you entered: '{new_word}'")
+            print(f"So, you entered: '{new_word}'")
 
-        if (self.__askPromptCorrect(self.__addNewAdjective)):
-            self.__data_lists["adjective"].append(new_word)
-            self.__has_changes = True
-            print(Fore.LIGHTGREEN_EX + "New entry added!\n")
+            if (self.__askPromptCorrect(self.__addNewAdjective)):
+                self.__data_lists["adjective"].append(new_word)
+                self.__has_changes = True
+                print(Fore.LIGHTGREEN_EX + "New entry added!\n")
+        except Exception as e:
+            print(Fore.RED + f"Error while adding a new adjective: {e}")
 
     def __addNewAdverb(self):
-        english = {"EN": input("EN: ")}
-        german = {"DE": input("DE: ")}
+        try:
+            english = {"EN": input("EN: ")}
+            german = {"DE": input("DE: ")}
 
-        new_word = [english, german]
+            new_word = [english, german]
 
-        print(f"So, you entered: '{new_word}'")
+            print(f"So, you entered: '{new_word}'")
 
-        if (self.__askPromptCorrect(self.__addNewAdverb)):
-            self.__data_lists["adverb"].append(new_word)
-            self.__has_changes = True
-            print(Fore.LIGHTGREEN_EX + "New entry added!\n")
+            if (self.__askPromptCorrect(self.__addNewAdverb)):
+                self.__data_lists["adverb"].append(new_word)
+                self.__has_changes = True
+                print(Fore.LIGHTGREEN_EX + "New entry added!\n")
+        except Exception as e:
+            print(Fore.RED + f"Error while adding a new adverb: {e}")
 
     def __askPromptCorrect(self, function):
         answer = input("Is it correct? (YES/no): ")
