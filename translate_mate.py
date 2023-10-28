@@ -76,9 +76,24 @@ class MainProgram:
     def __addNewNoun(self):
         try:
             english = {"EN": input("EN: ")}
+            while (not english["EN"].strip()):
+                print(Fore.RED + "EN (English) field cannot be empty.")
+                english = {"EN": input("EN: ")}
+            
             german = {"DE": input("DE: ")}
+            while (not german["DE"].strip()):
+                print(Fore.RED + "DE (German) field cannot be empty.")
+                german = {"DE": input("DE: ")}
+   
             gender = {"GENDER": input("GENDER (DE): ")}
+            while (not gender["GENDER"].strip()):
+                print(Fore.RED + "GENDER field cannot be empty.")
+                gender = {"GENDER": input("GENDER (DE): ")}
+
             plural = {"PLURAL": input("PLURAL (DE): ")}
+            while (not plural["PLURAL"].strip()):
+                print(Fore.RED + "PLURAL field cannot be empty.")
+                plural = {"PLURAL": input("PLURAL (DE): ")}
 
             new_word = [english, german, gender, plural]
 
@@ -94,8 +109,19 @@ class MainProgram:
     def __addNewVerb(self):
         try:
             english = {"EN": input("EN: ")}
+            while (not english["EN"].strip()):
+                print(Fore.RED + "EN (English) field cannot be empty.")
+                english = {"EN": input("EN: ")}
+
             german = {"DE": input("DE: ")}
+            while (not german["DE"].strip()):
+                print(Fore.RED + "DE (German) field cannot be empty.")
+                german = {"DE": input("DE: ")}
+
             partizip = {"PARTIZIP": input("PARTIZIP: ")}
+            while (partizip["PARTIZIP"].strip()):
+                print(Fore.RED + "PARTIZIP field cannot be empty.")
+                partizip = {"PARTIZIP": input("PARTIZIP: ")}
 
             new_word = [english, german, partizip]
 
@@ -111,9 +137,24 @@ class MainProgram:
     def __addNewAdjective(self):
         try:
             english = {"EN": input("EN: ")}
+            while (not english["EN"].strip()):
+                print(Fore.RED + "EN (English) field cannot be empty.")
+                english = {"EN": input("EN: ")}
+
             german_m = {"DE_M": input("DE_M: ")}
+            while (not german_m["DE_M"].strip()):
+                print(Fore.RED + "DE_M field cannot be empty")
+                german_m = {"DE_M": input("DE_M: ")}
+
             german_f = {"DE_F": input("DE_F: ")}
-            german_n = {"DEF_N": input("DE_N: ")}
+            while (not german_f["DE_F"].strip()):
+                print(Fore.RED + "DE_F field cannot be empty")
+                german_f = {"DE_F": input("DE_F: ")}
+                
+            german_n = {"DE_N": input("DE_N: ")}
+            while (not german_n["DE_N"].strip()):
+                print(Fore.RED + "DE_N field cannot be empty")
+                german_n = {"DE_N": input("DE_N: ")}
 
             new_word = [english, german_m, german_f, german_n]
 
@@ -129,7 +170,13 @@ class MainProgram:
     def __addNewAdverb(self):
         try:
             english = {"EN": input("EN: ")}
+            while (not english["EN"].strip()):
+                print(Fore.RED + "EN (English) field cannot be empty.")
+                english = {"EN": input("EN: ")}
             german = {"DE": input("DE: ")}
+            while (not german["DE"].strip()):
+                print(Fore.RED + "DE (German) field cannot be empty.")
+                german = {"DE": input("DE: ")}
 
             new_word = [english, german]
 
@@ -141,25 +188,6 @@ class MainProgram:
                 print(Fore.LIGHTGREEN_EX + "New entry added!\n")
         except Exception as e:
             print(Fore.RED + f"Error while adding a new adverb: {e}")
-
-    def __askPromptCorrect(self, function):
-        answer = input("Is it correct? (YES/no): ")
-        if answer.strip().upper() == "YES" or answer.strip().lower() == "y" or not answer:
-            return True
-        elif answer.strip().upper() == "NO" or answer.strip().lower() == "n":
-            function()
-            return False
-        else:
-            return self.__askPromptCorrect()
-        
-    def __AskPromptGoAhead(self):
-        answer = input("(YES/no): ")
-        if answer.strip().upper() == "YES" or answer.strip().lower() == "y" or not answer:
-            return True
-        elif answer.strip().upper() == "NO" or answer.strip().lower() == "n":
-            return False
-        else:
-            return self.__AskPromptGoAhead()
         
     def __findWord(self):
         word_to_look_for = input("Enter word: ")
@@ -198,21 +226,81 @@ class MainProgram:
                 data_list.remove(entry)
                 self.__has_changes = True
                 print(Fore.RED + "Word removed.")
+
+    def __showEntry(self):
+        e_type = input("Enter your choice: ")
+
+        if e_type == '1':
+            self.__show(self.__data_lists["noun"])
+        elif e_type == '2':
+            self.__show(self.__data_lists["verb"])
+        elif e_type == '3':
+            self.__show(self.__data_lists["adjective"])
+        elif e_type == '4':
+            self.__show(self.__data_lists["adverb"])
+        elif e_type == '5':
+            self.__show(self.__data_lists["noun"])
+            self.__show(self.__data_lists["verb"])
+            self.__show(self.__data_lists["adjective"])
+            self.__show(self.__data_lists["adverb"])
+        elif e_type == '6':
+            return
+        else:
+            print(Fore.RED + "Invalid choice. Please select a valid option.")
+            self.__showEntry()
+
+    def __show(self, entry):
+        if len(entry) == 0:
+            print(Fore.RED + "This list is empty, try adding some words!")
+            return
+        
+        for dict in entry:
+            print(f"'{dict}'")
+            
+
+    def __askPromptCorrect(self, function):
+        answer = input("Is it correct? (YES/no): ")
+        if answer.strip().upper() == "YES" or answer.strip().lower() == "y" or not answer:
+            return True
+        elif answer.strip().upper() == "NO" or answer.strip().lower() == "n":
+            function()
+            return False
+        else:
+            return self.__askPromptCorrect()
+        
+    def __AskPromptGoAhead(self):
+        answer = input("(YES/no): ")
+        if answer.strip().upper() == "YES" or answer.strip().lower() == "y" or not answer:
+            return True
+        elif answer.strip().upper() == "NO" or answer.strip().lower() == "n":
+            return False
+        else:
+            return self.__AskPromptGoAhead()
         
     def __displayWordMenu(self):
-        print(Fore.GREEN + "Ok, which type of word is it?:")
+        print(Fore.GREEN + "Ok, what are you going to add?:")
         print(Fore.BLUE + "1. Noun.")
         print(Fore.BLUE + "2. Verb.")
         print(Fore.BLUE + "3. Adjective.")
         print(Fore.BLUE + "4. Adverb.")
         print(Fore.RED + "5. Go back")
 
+    def __displayListOfEntries(self):
+        print(Fore.GREEN + "What do you want to see?")
+        print(Fore.BLUE + "1. Nouns.")
+        print(Fore.BLUE + "2. Verbs.")
+        print(Fore.BLUE + "3. Adjectives.")
+        print(Fore.BLUE + "4. Adverbs.")
+        print(Fore.BLUE + "5. Show all.")
+        print(Fore.RED + "6. Go back")
+
     def __displayMainMenu(self):
-        print(Fore.GREEN + "Please, select one of the available options down below:")
+        print(Fore.GREEN + "\nPlease, select one of the available options down below:")
         print(Fore.BLUE + "1. Add a new word.")
         print(Fore.BLUE + "2. Look for an existing word.")
         print(Fore.BLUE + "3. Remove an existing word.")
-        print(Fore.RED + "4. Quit")
+        print(Fore.BLUE + "4. List all available words.")
+        print(Fore.RED + "5. Quit")
 
     def run(self):
 
@@ -236,7 +324,10 @@ class MainProgram:
             elif choice == '3':
                 print(Fore.LIGHTGREEN_EX + "Let's get rid of that word for good!")
                 self.__removeWord()
-            elif choice == '4' or choice.strip().lower() == 'q':
+            elif choice == '4':
+                self.__displayListOfEntries()
+                self.__showEntry()
+            elif choice == '5' or choice.strip().lower() == 'q':
                 self.__saveAndExit()
                 break
             else:

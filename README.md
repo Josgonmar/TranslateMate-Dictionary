@@ -7,6 +7,7 @@ TranslateMate-Dictionary is an interactive English-German dictionary program wri
 - Add new word pairs with English and German translations.
 - Search for existing word entries.
 - Remove words from the dictionary.
+- List all words available.
 - Data is saved to a JSON file for persistence.
 - User-friendly and colorful console interface.
 
@@ -29,8 +30,3 @@ The project relies on the following Python libraries:
 - [x] Implement word removal functionality.
 - [x] Implement type of word (verb, noun, adj...).
 - [x] Implement singular and plural words.
-
-- [ ] Improve input validation and error handling.
-- [ ] Enhance user prompts and feedback.
-- [ ] Refactor code for better maintainability.
-- [ ] Handle duplicate dictionary entries.
